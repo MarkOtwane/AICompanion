@@ -10,6 +10,7 @@ type User = {
 interface ChatContextProps {
   messages: Message[];
   addMessage: (message: Message) => void;
+  clearMessages: () => void;
   user: User;
   setUser: (user: User) => void;
   isLoading: boolean;
@@ -23,8 +24,14 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useLocalStorage<User>("chat-user", { name: "", initial: "" });
   const [isLoading, setIsLoading] = useState(false);
 
+  // Add a message to the chat
   const addMessage = (message: Message) => {
     setMessages((prevMessages) => [...prevMessages, message]);
+  };
+
+  // Clear all chat messages
+  const clearMessages = () => {
+    setMessages([]);
   };
 
   return (
@@ -32,6 +39,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       value={{
         messages,
         addMessage,
+        clearMessages,
         user,
         setUser,
         isLoading,

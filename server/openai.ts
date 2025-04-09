@@ -1,13 +1,22 @@
 import OpenAI from "openai";
 
-// the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
-const openai = new OpenAI({ 
-  apiKey: process.env.OPENAI_API_KEY || "sk-dummy-key"
-});
+// Check if we have an API key
+const isApiKeyAvailable = !!process.env.OPENAI_API_KEY && process.env.OPENAI_API_KEY !== "sk-dummy-key";
+
+// Create the OpenAI client if API key is available
+const openai = isApiKeyAvailable 
+  ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY }) 
+  : null;
 
 // Function to get a response from OpenAI's ChatGPT
 export async function chatGptCompletion(prompt: string): Promise<string> {
+  // If API key is not available, return a message about it
+  if (!isApiKeyAvailable || !openai) {
+    return "I can't respond right now because the OpenAI API key is missing or invalid. Please add a valid API key in the environment settings.";
+  }
+
   try {
+    // The newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
     const response = await openai.chat.completions.create({
       model: "gpt-4o", // Using the latest model
       messages: [
@@ -34,7 +43,7 @@ export async function chatGptCompletion(prompt: string): Promise<string> {
       if (error.status === 429) {
         return "I'm experiencing high demand right now. Please try again in a moment.";
       } else if (error.status === 401) {
-        return "There seems to be an authentication issue with the AI service. Please contact support.";
+        return "There seems to be an authentication issue with the AI service. Please provide a valid OpenAI API key.";
       }
     }
     
