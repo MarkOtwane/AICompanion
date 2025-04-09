@@ -139,6 +139,11 @@ export default function ChatContainer() {
           <div className="px-3 pb-2 flex justify-between items-center">
             <p className="text-xs text-gray-500">
               Messages are processed using OpenAI. Your chat history is stored in the database.
+              {messages.some(m => m.content.includes("OpenAI API key is missing or invalid")) && (
+                <span className="block mt-1 text-amber-500 font-medium">
+                  Please provide a valid OpenAI API key to enable AI responses.
+                </span>
+              )}
             </p>
           </div>
         </div>
