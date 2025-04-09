@@ -5,7 +5,15 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function formatTimestamp(date: Date): string {
+export function formatTimestamp(timestamp: Date | string): string {
+  // Ensure we have a Date object
+  const date = timestamp instanceof Date ? timestamp : new Date(timestamp);
+  
+  // Check if the date is valid
+  if (isNaN(date.getTime())) {
+    return "Invalid date";
+  }
+  
   const now = new Date();
   const timeDiff = now.getTime() - date.getTime();
   const seconds = Math.floor(timeDiff / 1000);
